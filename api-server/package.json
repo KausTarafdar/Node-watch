@@ -1,15 +1,23 @@
 {
   "name": "api-server",
+  "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "build": "rimraf ./build && tsc",
+    "start:dev": "tsx watch src/index.ts",
+    "start": "node ./build/index.js",
+    "start:prod": "npm run build && npm run start"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.1",
     "dotenv": "^16.4.5",
-    "hono": "^4.6.3"
+    "hono": "^4.6.3",
+    "ps-list": "^8.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
-    "tsx": "^4.7.1"
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
   }
 }

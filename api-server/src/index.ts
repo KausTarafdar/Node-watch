@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import { config } from './config/config'
-import router from '../routes'
+import { config } from './config/config.js'
+import router from './routes/index.js'
 
 const app = new Hono()
 const port = config.port
