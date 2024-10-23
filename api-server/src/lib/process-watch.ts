@@ -1,12 +1,14 @@
 import path from "node:path/posix";
 import psList, { ProcessDescriptor } from "ps-list";
-import extractDir from "./extract.js";
+import extractDir from "./extract";
+import matchProcess from "./match";
 
 export interface Process {
 	pid: number;
     name: string;
 	ppid: number;
 	process_path: string;
+    full_patch?: string
 	cpu: number;
 	memory: number;
 	uid: number;
@@ -64,10 +66,27 @@ class NodeWatcher {
             const processes = await psList()
             const nodeProcesses = processes.filter((p) => p.cmd!.split(' ')[0] === '/usr/bin/node')
             const matchedProcess = matchProcess(nodeProcesses, pName);
-            
+            if(matchedProcess === null) {
+                return null
+            }
+            else {
+                let pathStr = path.parse(matchedProcess.cmd!);
+                let processDir = extractDir(path.parse(matchedProcess.cmd!).dir)
+                let process: Process = {
+                    pid: matchedProcess.pid,
+                    name: matchedProcess.name,
+                    ppid: matchedProcess.ppid,
+                    process_path: processDir + pathStr.base,
+                    full_patch: matchedProcess.cmd!,
+                    cpu: matchedProcess.cpu!,
+                    memory: matchedProcess.memory!,
+                    uid: matchedProcess.uid!,
+                }
+                return process
+            }
         }
         else {
-            console.error("Architecture not supported")
+            throw new Error("Architecture not supported")
         }
     }
 
