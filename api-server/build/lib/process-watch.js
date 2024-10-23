@@ -16,7 +16,6 @@ class NodeWatcher {
             if (process.platform !== 'win32') {
                 const processes = yield psList();
                 const nodeProcesses = processes.filter((p) => p.cmd.split(' ')[0] === '/usr/bin/node');
-                console.log(nodeProcesses);
                 var processArray = [];
                 for (let i = 0; i < nodeProcesses.length; i++) {
                     let pathStr = path.parse(nodeProcesses[i].cmd);
@@ -44,19 +43,34 @@ class NodeWatcher {
         return __awaiter(this, void 0, void 0, function* () {
             if (process.platform !== 'win32') {
                 const processes = yield psList();
+                let res = false;
                 processes.forEach((p) => {
                     if (p.pid === pid) {
-                        return p;
+                        res = p;
                     }
                 });
+                return res;
+            }
+            else {
                 return false;
             }
-            return false;
         });
     }
     findOne(pName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //Find a node service by fuzzy matching the P name
+            if (process.platform !== 'win32') {
+                const processes = yield psList();
+                const nodeProcesses = processes.filter((p) => p.cmd.split(' ')[0] === '/usr/bin/node');
+                const matchedProcess = matchProcess(nodeProcesses, pName);
+            }
+            else {
+                console.error("Architecture not supported");
+            }
+        });
     }
     killOne(pid) {
+        //Provide the id to kill a process
     }
 }
 export default NodeWatcher;

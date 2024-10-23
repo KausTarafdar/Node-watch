@@ -16,6 +16,7 @@ router.get('/details/:processId', async (c: Context) => {
 })
 
 router.get('/status/:processName', (c: Context) => {
+    const processDetails = nodeWatcher.findOne(c.req.param('processName'));
     return c.json({ message: `Received ${c.req.param('processName')}` })
 })
 

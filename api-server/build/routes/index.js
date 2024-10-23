@@ -20,6 +20,7 @@ router.get('/details/:processId', (c) => __awaiter(void 0, void 0, void 0, funct
     return c.json({ processDetails });
 }));
 router.get('/status/:processName', (c) => {
+    const processDetails = nodeWatcher.findOne(c.req.param('processName'));
     return c.json({ message: `Received ${c.req.param('processName')}` });
 });
 router.delete('/:processId', (c) => {

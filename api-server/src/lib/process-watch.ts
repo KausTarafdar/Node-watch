@@ -11,6 +11,7 @@ export interface Process {
 	memory: number;
 	uid: number;
 }
+
 class NodeWatcher {
     async list(): Promise<Process[]>{
         if(process.platform !== 'win32') {
@@ -57,12 +58,21 @@ class NodeWatcher {
         }
     }
 
-    findOne(pName: string) {
-
+    async findOne(pName: string) {
+        //Find a node service by fuzzy matching the P name
+        if (process.platform !== 'win32') {
+            const processes = await psList()
+            const nodeProcesses = processes.filter((p) => p.cmd!.split(' ')[0] === '/usr/bin/node')
+            const matchedProcess = matchProcess(nodeProcesses, pName);
+            
+        }
+        else {
+            console.error("Architecture not supported")
+        }
     }
 
     killOne(pid: Number) {
-
+        //Provide the id to kill a process
     }
 }
 
