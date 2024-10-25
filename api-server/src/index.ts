@@ -1,11 +1,8 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import { config } from './config/config.js'
-import router from './routes/index.js'
+import router from './routes/index'
 
 const app = new Hono()
-
-console.log(config.environment)
 
 app.route('/', router);
 
