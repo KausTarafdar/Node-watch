@@ -10,8 +10,12 @@ router.get('/list', async (c: Context) => {
     return c.json({ps_list});
 });
 
-router.get('/details/:processId', async (c: Context) => {
-    const processDetails = await nodeWatcher.getOne(parseInt(c.req.param('processId')))
+router.get('/details', async (c: Context) => {
+    const { pid } = c.req.query();
+    if (pid === undefined || pid === '') {
+        return c.json({ message: 'Please pass a process id' });
+    }
+    const processDetails = await nodeWatcher.getOne(parseInt(pid))
     return c.json({processDetails})
 })
 
@@ -29,8 +33,18 @@ router.get('/status', async (c: Context) => {
     return c.json({processDetails})
 })
 
-router.delete('/:processId', (c: Context) => {
-    return c.json({ message: `Received ${c.req.param('processId')}` })
+router.delete('/delete', async (c: Context) => {
+    const { pid } = c.req.query();
+    if (pid === undefined || pid === '') {
+        return c.json({ message: 'No such process running on the machine' })
+
+    }
+    if (!(await nodeWatcher.killOne(parseInt(pid)))) {
+        return c.json({ message: 'No such process running on the machine' })
+    }
+    else {
+        return c.json({ message: `Process ${pid} has been stopped` })
+    }
 })
 
 export default router

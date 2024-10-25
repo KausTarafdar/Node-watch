@@ -2,6 +2,7 @@ import path from "node:path/posix";
 import psList, { ProcessDescriptor } from "ps-list";
 import extractDir from "./extract";
 import matchProcess from "./match";
+import { ChildProcess, exec } from "node:child_process";
 
 export interface Process {
 	pid: number;
@@ -45,18 +46,20 @@ class NodeWatcher {
     }
 
     async getOne(pid: number): Promise<ProcessDescriptor | boolean> {
+        console.log(pid)
         if(process.platform !== 'win32'){
             const processes = await psList();
-            let res: ProcessDescriptor | boolean = false
+            let process: ProcessDescriptor | boolean = false
             processes.forEach((p) => {
                 if(p.pid === pid) {
-                    res = p
+                    process = p
                 }
             })
-            return res
+            console.log(process)
+            return process
         }
         else {
-            return false
+            throw new Error('Architecture not supported')
         }
     }
 
@@ -90,8 +93,20 @@ class NodeWatcher {
         }
     }
 
-    killOne(pid: Number) {
-        //Provide the id to kill a process
+    async killOne(pid: number) {
+        try {
+            if (await this.getOne(pid)) {
+                exec(`kill -9 ${pid}`)
+                console.log(`Successfully stopped process`)
+                return true
+            }
+            else {
+                throw new Error('No such process')
+            }
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 }
 
