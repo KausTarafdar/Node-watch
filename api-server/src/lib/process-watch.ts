@@ -2,7 +2,7 @@ import path from "node:path/posix";
 import psList, { ProcessDescriptor } from "ps-list";
 import extractDir from "./extract";
 import matchProcess from "./match";
-import { ChildProcess, exec } from "node:child_process";
+import { exec } from "node:child_process";
 
 export interface Process {
 	pid: number;
